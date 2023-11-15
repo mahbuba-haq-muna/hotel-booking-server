@@ -32,7 +32,13 @@ async function run() {
 
     // Move the route handling for '/rooms' inside the try block
     app.get('/rooms', async (req, res) => {
-      const cursor = roomCollection.find();
+        const filter = req.query;
+        console.log(filter);
+        const query = {}
+        const options ={
+            sort: { price_per_night: filter.sort === 'asc' ? 1 : -1 }
+        }
+      const cursor = roomCollection.find(query, options);
       const result = await cursor.toArray();
       res.send(result);
     });
