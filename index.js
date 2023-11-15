@@ -27,7 +27,8 @@ async function run() {
     await client.connect();
 
     const roomCollection = client.db('hotelRoom').collection('rooms');
-    const bookingCollection = client.db('hotelRoom').collection('bookings')
+    const bookingCollection = client.db('hotelRoom').collection('bookings');
+    const reviewCollection = client.db('hotelRoom').collection('review')
 
     // Move the route handling for '/rooms' inside the try block
     app.get('/rooms', async (req, res) => {
@@ -57,6 +58,7 @@ async function run() {
         const result = await cursor.toArray();
         res.send(result);
       });
+    
 
       app.delete('/bookings/:id', async (req, res) =>{
         const id = req.params.id;
@@ -64,6 +66,22 @@ async function run() {
         const result = await bookingCollection.deleteOne(query);
         res.send(result);
       })
+
+    //   ratings
+
+    app.post('/review', async (req, res) =>{
+        const review = req.body;
+        console.log(review);
+        const result = await reviewCollection.insertOne(review);
+        res.send(result)
+    })
+
+    app.get('/review', async(req, res) =>{
+        const cursor = reviewCollection.find();
+        const result = await cursor.toArray();
+        res.send(result);
+
+    })
 
     // Send a ping to confirm a successful connection
     await client.db('admin').command({ ping: 1 });
